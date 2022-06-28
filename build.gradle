@@ -1,19 +1,45 @@
 plugins {
-    id 'java'
+    id 'org.beryx.jlink' version '2.25.0'
 }
 
-group 'org.example'
+group 'info.lma1980'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
-
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(18))
+    }
 }
-
+application {
+    mainClass = 'info.lma1980.example.Main'
+    mainModule = 'info.lma1980.example.main'
+    applicationName = 'helloworld'
+}
+dependencies {
+    implementation 'org.jline:jline:3.21.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
 test {
     useJUnitPlatform()
+}
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+}
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'jline3.jlink.example.main',
+                'Main-Class': 'info.lma1980.example.Main'
+    }
+}
+tasks.jar.enabled = true
+jlink {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher{
+        name = 'helloworld'
+    }
 }
